@@ -5,7 +5,7 @@ const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
     mode: 'development',
-    devtool: 'eval-source-map', // Development-friendly source maps
+    devtool: 'eval-cheap-module-source-map', // Fastest for development
     devServer: {
         watchFiles: ['./src/template.html'],
     },

@@ -3,3 +3,7 @@ body {
     background-color: rgb(68, 68, 149);
     color: white;
 }
+
+.newTodo {
+    color: rgb(235, 174, 174);
+}
