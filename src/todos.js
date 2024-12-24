@@ -29,4 +29,5 @@ export const submitTodo = (event) => {
 
 export const deleteTodo = (projectIndex, todoIndex) => {
   state.projects[projectIndex].todos.splice(todoIndex, 1);
+  pubSub.publish('todoDeleted', { projectIndex, todoIndex});
 }
