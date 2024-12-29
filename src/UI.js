@@ -4,12 +4,13 @@ import { pubSub } from "./pubsub";
 import { deleteTodo } from "./todos";
 import { addToProject } from "./projects";
 import { deleteProject } from "./projects";
+import { getSelectedProject } from "./projects";
 
-let displayProjects = document.querySelector('.display-projects');
 let defaultProject = document.querySelector('.default-project');
 let projectList = document.querySelector('.project-list');
 
-const renderTodo = (task, todoIndex, projectIndex = 0) => {
+
+const renderTodo = (task, todoIndex, projectIndex) => {
     let newTodo = document.createElement('div');
     newTodo.classList.add('newTodo');
     defaultProject.appendChild(newTodo);
@@ -66,40 +67,77 @@ const renderTodo = (task, todoIndex, projectIndex = 0) => {
     newTodo.appendChild(priority);
 }
 
-export const renderTodos = (projectIndex = 0) => {
-    defaultProject.innerHTML = "";
-    const project = state.projects[projectIndex];
+export const renderTodos = (projectIndex, projectName) => {
+    let { name: currentProjectName, index: currentProjectIndex} = getSelectedProject();
+    if (projectIndex) {
+        currentProjectIndex = projectIndex
+    }
+    if (projectName) {
+        currentProjectName = projectName
+    }
+
+    defaultProject.innerHTML = `"${currentProjectName}" project`;
+    const project = state.projects[currentProjectIndex];
     project.todos.forEach((todo, todoIndex) => {
-        renderTodo(todo, todoIndex, projectIndex);
+        renderTodo(todo, todoIndex, currentProjectIndex);
     });
 };
 
-export const renderProjects = () => {
+export const renderProjects = (makeActive) => {
+    let makeActiveIndex;
+    makeActiveIndex = makeActive;
     projectList.innerHTML = "";
     state.projects.forEach((project, projectIndex) => {
         let projectElement = document.createElement('div');
         projectElement.classList.add('project-element');
+        let projectNameSpan = document.createElement('span');
+        projectNameSpan.classList.add('project-name');
+        projectNameSpan.textContent = project.name;
+
+        projectElement.appendChild(projectNameSpan);
         projectList.appendChild(projectElement);
-        projectElement.innerHTML = project.name;
+
+        if (projectIndex === 0) {
+            projectElement.classList.add('active');
+        }
+        if (makeActiveIndex) {
+            if (makeActiveIndex === projectIndex) {
+                projectElement.classList.add('active');
+            } else {
+                projectElement.classList.remove('active');
+            }
+        }
+        
 
         let deleteProjectBtn = document.createElement('button');
         deleteProjectBtn.classList.add('deleteProjectBtn');
         deleteProjectBtn.innerHTML ='x';
         projectElement.appendChild(deleteProjectBtn);
 
-        deleteProjectBtn.addEventListener('click', () => {
+        deleteProjectBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
             deleteProject(projectIndex);
             renderProjects();
-            // renderTodos();
         });
+
+        projectElement.addEventListener('click', () => {
+            document.querySelectorAll('.project-element').forEach((el) => el.classList.remove('active'));
+            projectElement.classList.add('active');
+            console.log(`Rendered project "${project.name}"`);
+            renderTodos(projectIndex = projectIndex, `${project.name}`);
+        })
     }
     );
 };
 
+
+
 pubSub.subscribe('newTodo', (todo) => {
+    let { index: currentProjectIndex } = getSelectedProject();
     console.log(todo);
     console.log(`Todo added to "Default" project`);
-    renderTodos();
+    renderTodos(currentProjectIndex);
+    console.log(state.projects)
 });
 
 pubSub.subscribe('todoDeleted', ({projectIndex, todoIndex}) => {

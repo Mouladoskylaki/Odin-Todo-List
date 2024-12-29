@@ -1,4 +1,7 @@
 /* styles.css */
+* {
+    font-family: sans-serif;
+}
 body {
     background-color: rgb(68, 68, 149);
     color: white;
@@ -20,4 +23,12 @@ h2 {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     padding-top: 0.5rem;
+}
+
+.project-element:hover {
+    cursor: pointer;
+}
+
+.project-list > .project-element:last-child > span {
+    color: red;
 }

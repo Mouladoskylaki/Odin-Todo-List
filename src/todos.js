@@ -1,6 +1,7 @@
 // console.log('Todos.js loaded');
 import { state } from "./state";
 import { pubSub } from "./pubsub";
+import { getSelectedProject } from "./projects";
 
 let titleInput = document.querySelector('.title-input');
 let descriptionInput = document.querySelector('.description-input');
@@ -22,12 +23,16 @@ state.projects[0].todos.push(testTodo);
 export const submitTodo = (event) => {
     event.preventDefault();
     let newTodo = new Todo(titleInput.value, descriptionInput.value, dueDateInput.value, priorityInput.value);
-    state.projects[0].todos.push(newTodo);           
-
+    let { index: currentProjectIndex, name: currentProjectName } = getSelectedProject();
+    state.projects[currentProjectIndex].todos.push(newTodo);
+    if (currentProjectIndex !== 0) {
+        state.projects[0].todos.push(newTodo);
+    }
     pubSub.publish('newTodo', newTodo);
 };
 
 export const deleteTodo = (projectIndex, todoIndex) => {
-  state.projects[projectIndex].todos.splice(todoIndex, 1);
+  let { index: currentProjectIndex, name: currentProjectName } = getSelectedProject();
+  state.projects[currentProjectIndex].todos.splice(todoIndex, 1);
   pubSub.publish('todoDeleted', { projectIndex, todoIndex});
 }

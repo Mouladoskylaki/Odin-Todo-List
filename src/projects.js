@@ -4,14 +4,23 @@ import { renderTodos } from "./UI";
 import { renderProjects } from "./UI";
 
 let newProjectInput = document.querySelector('.new-project-input');
-let projectList = document.querySelector('.project-list');
 
 export const newProject = () => {
     state.projects.push({name: newProjectInput.value, todos: []});
     console.log(newProjectInput.value);
     console.log(state.projects);
-    renderTodos();
-    renderProjects();
+    let neoIndex;
+    const neoProject = state.projects.find((project, index) => {
+        if (project.name === newProjectInput.value) {
+            neoIndex = index
+        }
+    })
+    let project = document.querySelector('.project-list > .project-element:last-child');
+    project.classList.add('active');
+    console.log(project)
+    console.log(neoIndex)
+    renderTodos(neoIndex, newProjectInput.value);
+    renderProjects(neoIndex);
 }
 
 export const addToProject = (task, selectedProjectName) => {
@@ -46,6 +55,20 @@ export const deleteProject = (projectIndex) => {
                     console.log('Cannot delete "Default" project');
                     return;
                 }
-                console.log("project deleteted");
+                console.log(`Project "${projectName}" deleted`);
                 state.projects.splice(projectIndex, 1);          
-}
+};
+
+export const getSelectedProject = () => {
+    const activeElement = document.querySelector('.project-element.active .project-name');
+    let selectedProjectIndex;
+    let selectedProjectName;
+    state.projects.forEach((project, index) => {
+        if (project.name === activeElement.textContent) {
+            selectedProjectIndex = index;
+            selectedProjectName = project.name;
+        }
+    })
+    console.log(selectedProjectIndex, selectedProjectName);
+    return { index: selectedProjectIndex, name: selectedProjectName };
+};
