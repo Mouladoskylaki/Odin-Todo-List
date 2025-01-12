@@ -69,6 +69,5 @@ export const getSelectedProject = () => {
             selectedProjectName = project.name;
         }
     })
-    console.log(selectedProjectIndex, selectedProjectName);
     return { index: selectedProjectIndex, name: selectedProjectName };
 };

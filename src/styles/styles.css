@@ -32,3 +32,41 @@ h2 {
 .project-list > .project-element:last-child > span {
     color: red;
 }
+
+.foot {
+    background-color: yellow;
+    height: 150px;
+}
+
+.toolTip {
+    position: relative;
+    /* display: inline-block; */
+}
+
+.toolTip .toolTipText {
+    visibility: hidden;
+    color: black;
+    font-weight: bolder;
+    position: absolute;
+    left: 3rem;
+    bottom: 0.1rem;
+    background-color: white;
+    padding: 0.2rem;
+}
+
+.toolTip:hover .toolTipText {
+    visibility: visible;
+}
+
+.toolTipText {
+    opacity: 1;
+    transition:  opacity 0.3s ease;
+}
+
+.toolTipText.fade-out {
+    opacity: 0;
+}
+
+.sortBtn {
+    margin-bottom: 0.2rem;
+}
