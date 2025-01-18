@@ -10,6 +10,7 @@ import { formatType } from ".";
 import { toolTipFun } from "./toolTip";
 import { colorizeByProperty } from "./domUtils";
 import { expandTasks } from "./domUtils";
+import { createButton } from "./utils";
 
 let defaultProject = document.querySelector('.default-project');
 let projectList = document.querySelector('.project-list');
@@ -19,23 +20,14 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
     newTodo.classList.add('newTodo');
     defaultProject.appendChild(newTodo);
 
-    let deleteTodoBtn = document.createElement('button');
-    deleteTodoBtn.classList.add('deleteTodoBtn');
-    deleteTodoBtn.innerHTML = 'x';
-    newTodo.appendChild(deleteTodoBtn);
-
-    deleteTodoBtn.addEventListener('click', () => {
+    // Delete task Btn
+    createButton('deleteTodoBtn', 'x', newTodo, () => {
         deleteTodo(projectIndex, todoIndex);
         console.log(state.projects[0]);
     });
     
-    // Add to Project
-    let addToProjectBtn = document.createElement('button');
-    addToProjectBtn.classList.add('addToProjectBtn');
-    addToProjectBtn.innerHTML = 'add to Project';
-    newTodo.appendChild(addToProjectBtn);
-
-    addToProjectBtn.addEventListener("click", () => {
+    // Add to Project Btn
+    createButton('addToProjectBtn', 'add to Project', newTodo, () => {
         const selectedProjectName = selectProjectList.value;
         addToProject(task, selectedProjectName);
     });
@@ -142,44 +134,6 @@ export const renderTodos = (projectIndex, projectName) => {
     });
 };
 
-export const populateArrFromLocal = (fun) => {
-    Object.keys(localStorage).forEach((key, index) => {
-     if (key.startsWith('newTodo')) {
-         console.log(key);
-         let localStorageTask = JSON.parse(localStorage.getItem(key));
-         state.projects[0].todos.push(localStorageTask);
-         state.projects[0].todos.sort((a, b) => a.originalIndex - b.originalIndex);
-         if (localStorageTask.addedToProject) {
-            if (localStorageTask.addedToProject === "Default") {
-                return
-            }
-            let addedToProjectIndex = localStorageTask.addedToProject;
-            console.log(addedToProjectIndex);
-            if (state.projects.some(project => project.name === localStorageTask.addedToProject)) {
-                if (undefined) {
-                    console.log('no such project');
-                }
-                state.projects.forEach((project) => {
-                    if (project.name === localStorageTask.addedToProject) {
-                        project.todos.push(localStorageTask);
-                        project.todos.sort((a, b) => a.originalIndex - b.originalIndex)
-                    }
-                })
-                return
-            } else {
-                state.projects.push({name: localStorageTask.addedToProject, todos: []});
-                state.projects.forEach((project) => {
-                    if (project.name === localStorageTask.addedToProject) {
-                        project.todos.push(localStorageTask);
-                        project.todos.sort((a, b) => a.originalIndex - b.originalIndex)
-                    }
-                })
-            }
-         }
-     }
- });
-}
-
 export const renderProjects = (makeActive) => {
     let sorted = false;
     let sortedLocaly = JSON.parse(localStorage.getItem('sorted'));
@@ -250,17 +204,12 @@ export const renderProjects = (makeActive) => {
             console.log(`Project "${project.name}" sorted by date`);
             renderTodos();
         })
-
-        let deleteProjectBtn = document.createElement('button');
-        deleteProjectBtn.classList.add('deleteProjectBtn');
-        deleteProjectBtn.innerHTML ='x';
-        projectElement.appendChild(deleteProjectBtn);
-
-        deleteProjectBtn.addEventListener('click', (event) => {
+        // Delete Project Btn
+        createButton('deleteProjectBtn', 'x', projectElement, (event) => {
             event.stopPropagation();
             deleteProject(projectIndex);
             renderProjects();
-        });
+        })
 
         projectElement.addEventListener('click', () => {
             document.querySelectorAll('.project-element').forEach((el) => el.classList.remove('active'));

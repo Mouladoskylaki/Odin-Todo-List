@@ -7,7 +7,7 @@ import { renderProjects } from './UI.js';
 import { newProject } from './projects.js';
 import { format, parse, set } from 'date-fns';
 import { state } from './state.js';
-import { populateArrFromLocal } from './UI.js';
+import { populateArrFromLocal } from './localStorageManager.js';
 
 export const formatType = 'MMM-dd-yyyy';
 
