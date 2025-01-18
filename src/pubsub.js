@@ -3,16 +3,16 @@ export const pubSub = {
 
     subscribe(event, callback) {
         if (!this.events[event]) {
-            this.events[event] = []; // Dynamically assign array for the event
+            this.events[event] = []; 
         }
 
-        this.events[event].push(callback); // Dynamically push to the correct event
+        this.events[event].push(callback);
     },
 
     publish(event, data) {
-        if (this.events[event]) { // Check if there are subscribers for the event
+        if (this.events[event]) {
             this.events[event].forEach((callback) => {
-                callback(data); // Pass the data to each callback
+                callback(data);
             });
         }
     }

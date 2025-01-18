@@ -8,12 +8,13 @@ import { getSelectedProject } from "./projects";
 import { format, parse } from "date-fns";
 import { formatType } from ".";
 import { toolTipFun } from "./toolTip";
-
+import { colorizeByProperty } from "./domUtils";
+import { expandTasks } from "./domUtils";
 
 let defaultProject = document.querySelector('.default-project');
 let projectList = document.querySelector('.project-list');
 
-const renderTodo = (task, todoIndex, projectIndex) => {
+export const renderTodo = (task, todoIndex, projectIndex) => {
     let newTodo = document.createElement('div');
     newTodo.classList.add('newTodo');
     defaultProject.appendChild(newTodo);
@@ -22,11 +23,6 @@ const renderTodo = (task, todoIndex, projectIndex) => {
     deleteTodoBtn.classList.add('deleteTodoBtn');
     deleteTodoBtn.innerHTML = 'x';
     newTodo.appendChild(deleteTodoBtn);
-
-    let expandBtn = document.createElement('button');
-    expandBtn.classList.add('expandBtn');
-    expandBtn.innerHTML = '&#10530;';
-    newTodo.appendChild(expandBtn);
 
     deleteTodoBtn.addEventListener('click', () => {
         deleteTodo(projectIndex, todoIndex);
@@ -116,22 +112,9 @@ const renderTodo = (task, todoIndex, projectIndex) => {
     makeEditableTasks('title', task.title);
     makeEditableTasks('dueDate', task.dueDate);
 
-// Expand Tasks
-    let taskExpanded = false;
-    expandBtn.addEventListener('click', (event) => {
-        event.stopPropagation();
-        if (!taskExpanded) {
-        makeEditableTasks('description', task.description);
-        makeEditableTasks('priority', task.priority); 
-        taskExpanded = true;
-        } else if (taskExpanded === true) {
-         const description = newTodo.querySelector('.description');
-         const priority = newTodo.querySelector('.priority');
-         newTodo.removeChild(description);
-         newTodo.removeChild(priority);
-         taskExpanded = false;
-        }
-    })
+    expandTasks(makeEditableTasks, task.description, task.priority, newTodo);
+    colorizeByProperty(newTodo, task.priority);
+
 };
 
 export const renderTodos = (projectIndex, projectName) => {
@@ -144,14 +127,62 @@ export const renderTodos = (projectIndex, projectName) => {
     }
 
     defaultProject.innerHTML = `"${currentProjectName}" project`;
+    
     const project = state.projects[currentProjectIndex];
+
     project.todos.forEach((todo, todoIndex) => {
-        renderTodo(todo, todoIndex, currentProjectIndex);
+        let todoInLocal = JSON.parse(localStorage.getItem(`newTodo${todo.originalIndex}`));
+
+        if (todoInLocal) {
+            console.log('ifLocal');
+            renderTodo(todoInLocal, todoIndex, currentProjectIndex)
+        } else {
+            console.log('notLocal')
+        }
     });
 };
 
+export const populateArrFromLocal = (fun) => {
+    Object.keys(localStorage).forEach((key, index) => {
+     if (key.startsWith('newTodo')) {
+         console.log(key);
+         let localStorageTask = JSON.parse(localStorage.getItem(key));
+         state.projects[0].todos.push(localStorageTask);
+         state.projects[0].todos.sort((a, b) => a.originalIndex - b.originalIndex);
+         if (localStorageTask.addedToProject) {
+            if (localStorageTask.addedToProject === "Default") {
+                return
+            }
+            let addedToProjectIndex = localStorageTask.addedToProject;
+            console.log(addedToProjectIndex);
+            if (state.projects.some(project => project.name === localStorageTask.addedToProject)) {
+                if (undefined) {
+                    console.log('no such project');
+                }
+                state.projects.forEach((project) => {
+                    if (project.name === localStorageTask.addedToProject) {
+                        project.todos.push(localStorageTask);
+                        project.todos.sort((a, b) => a.originalIndex - b.originalIndex)
+                    }
+                })
+                return
+            } else {
+                state.projects.push({name: localStorageTask.addedToProject, todos: []});
+                state.projects.forEach((project) => {
+                    if (project.name === localStorageTask.addedToProject) {
+                        project.todos.push(localStorageTask);
+                        project.todos.sort((a, b) => a.originalIndex - b.originalIndex)
+                    }
+                })
+            }
+         }
+     }
+ });
+}
+
 export const renderProjects = (makeActive) => {
     let sorted = false;
+    let sortedLocaly = JSON.parse(localStorage.getItem('sorted'));
     let makeActiveIndex = makeActive;
     projectList.innerHTML = "";
     state.projects.forEach((project, projectIndex) => {
@@ -174,16 +205,32 @@ export const renderProjects = (makeActive) => {
                 projectElement.classList.remove('active');
             }
         }
+// Sorting
         let sortBtn = document.createElement('button');
         sortBtn.classList.add('sortBtn');
         sortBtn.innerHTML = `Sort`;
         projectElement.appendChild(sortBtn);
 
-        toolTipFun(sortBtn, 'sort by Date', 'sort by original index');
+        const isSorted = (array, property) => {
+            for (let i = 0; i < array.length - 1; i++) {
+                if (array[i][property] > array[i + 1][property]) {
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        let alreadySortedByDate = isSorted(project.todos, 'originalIndex');
+        
+        if (alreadySortedByDate) {
+            toolTipFun(sortBtn, 'sort by Date', 'sort by original index');
+        } else {
+            toolTipFun(sortBtn, 'sort by original index', 'sort by Date');
+
+        }
 
         sortBtn.addEventListener('click', () => {
             if (sorted) {
-                // sortBtn.innerHTML = `Sort by Date`;
                 console.log(project.todos);
                 console.log('Sorted by original index');
                 project.todos.sort((a, b) => a.originalIndex - b.originalIndex)
@@ -201,7 +248,6 @@ export const renderProjects = (makeActive) => {
             sorted = true;
             sortBtn.classList.add('changed');
             console.log(`Project "${project.name}" sorted by date`);
-            // sortBtn.innerHTML = `Reset Sorting`;
             renderTodos();
         })
 
@@ -221,6 +267,7 @@ export const renderProjects = (makeActive) => {
             projectElement.classList.add('active');
             console.log(`Rendered project "${project.name}"`);
             renderTodos(projectIndex = projectIndex, `${project.name}`);
+            
         })
     }
     );
@@ -235,7 +282,6 @@ pubSub.subscribe('newTodo', (todo) => {
 });
 
 pubSub.subscribe('todoDeleted', ({projectIndex, todoIndex}) => {
-    console.log(state.projects[projectIndex].name)
     console.log(`Todo deleted from project "${state.projects[projectIndex].name}"`);
     renderTodos(projectIndex);
 });
