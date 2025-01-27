@@ -5,14 +5,19 @@ import { submitTodo } from './todos.js';
 import { renderTodos } from './UI.js';
 import { renderProjects } from './UI.js';
 import { newProject } from './projects.js';
-import { format, parse, set } from 'date-fns';
-import { state } from './state.js';
 import { populateArrFromLocal } from './localStorageManager.js';
+
+document.getElementById('year').textContent = new Date().getFullYear();
 
 export const formatType = 'MMM-dd-yyyy';
 
 const submitBtn = document.querySelector('.submit-btn');
 submitBtn.addEventListener('click', submitTodo);
+submitBtn.addEventListener('keydown', (key) => {
+    if (key === 'Enter') {
+        submitTodo();
+    }
+})
 
 let newProjectBtn = document.querySelector('.new-project');
 newProjectBtn.addEventListener('click', newProject);
@@ -21,21 +26,32 @@ populateArrFromLocal();
 renderProjects();
 renderTodos();
 
-let foot = document.querySelector('.foot');
-let logBtn = document.createElement('button');
-logBtn.innerHTML = 'log';
-foot.appendChild(logBtn);
 
-let pushBtn = document.createElement('button');
-pushBtn.innerHTML = 'push';
-foot.appendChild(pushBtn);
+// let logBtn = document.createElement('button');
+// logBtn.innerHTML = 'log';
+// foot.appendChild(logBtn);
 
-logBtn.addEventListener('click', () => {
-    console.log(state.projects)
-})
+// let pushBtn = document.createElement('button');
+// pushBtn.innerHTML = 'push';
+// foot.appendChild(pushBtn);
 
-pushBtn.addEventListener('click', () => {
-console.log(state.projects)
+// let array = [];
+// for (let i = 0; i < 10; i++) {
+//     array.push([]);
+// }
+// console.log(array);
+
+// let person = {
+//     name: 'John'
+// };
+
+// logBtn.addEventListener('click', () => {
+//    console.log(array);
+// })
+
+// pushBtn.addEventListener('click', () => {
+// array[5].push(person);
     
-})
+// })
+
   

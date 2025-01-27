@@ -8,6 +8,5 @@ export const createButton =
     button.textContent = textContent;
     parent.appendChild(button);
     button.addEventListener('click', onClick);
-    return button;
-    
+    return button;  
 };

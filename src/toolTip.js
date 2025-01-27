@@ -1,42 +1,29 @@
-// toolTip.js
+export const toolTipFun = (element, element2, text) => {
+    let toolTipText;
 
-export const toolTipFun = (element, text, text2) => {
-  let toolTipTimeOut;
-    element.addEventListener('mouseover', () => {
-      let toolTipDiv = document.createElement('div');
-      toolTipDiv.classList.add('toolTip');
-      
-      let toolTipText = document.createElement('span');
-      toolTipText.classList.add('toolTipText');
-      toolTipText.textContent = text;
-      toolTipDiv.appendChild(toolTipText);
-
-      element.classList.add('toolTip');
-      element.appendChild(toolTipText);
-
-      toolTipTimeOut = setTimeout(() => {
-        toolTipText.classList.add('fade-out');
-        setTimeout(() => {
-          if (toolTipText) {
-            element.removeChild(toolTipText);
-            element.classList.remove('toolTip');
-          }
-        }, 300);
-      }, 3000);
-
-      let elemChangedState = document.querySelector('.changed');
-      if (element.classList.contains('changed')) {
-        toolTipText.textContent = text2;
-      }
-
-    });
-    
-    element.addEventListener('mouseout', () => {
-      clearTimeout(toolTipTimeOut);
-        const toolTipText = document.querySelector('.toolTipText');
+    element.addEventListener('click', () => {
         if (toolTipText) {
-          element.removeChild(toolTipText);
-          element.classList.remove('toolTip');
-        };
+            // Remove the tooltip if it exists
+            element2.removeChild(toolTipText);
+            toolTipText = null;
+            element2.classList.remove('toolTip');
+        } else {
+            // Create and show the tooltip
+            toolTipText = document.createElement('span');
+            toolTipText.classList.add('toolTipText');
+            toolTipText.textContent = text;
+
+            element2.classList.add('toolTip');
+            element2.appendChild(toolTipText);
+
+            // Automatically remove the tooltip after 3 seconds
+            setTimeout(() => {
+                if (toolTipText && element2.contains(toolTipText)) {
+                    element2.removeChild(toolTipText);
+                    toolTipText = null;
+                    element2.classList.remove('toolTip');
+                }
+            }, 3000);
+        }
     });
-  };
+};

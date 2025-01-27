@@ -1,10 +1,13 @@
 // domUtils.js
+import { state } from "./state";
+import { renderTodos } from "./UI";
 
 export const colorizeByProperty = (element, obj) => {
     const priorityColors = {
-        '1': 'red',
-        '2': 'green',
-        '3': 'orange'
+        '1': '#FF3B30',
+        '2': '#FF9500',
+        '3': '#FFCC00',
+        'completed' : '#4CAF50'
     };
     element.style.backgroundColor = priorityColors[obj] || 'white';
 };
@@ -13,7 +16,7 @@ export const expandTasks = (makeEditableFunction, description, priority, taskEle
 
     let expandBtn = document.createElement('button');
     expandBtn.classList.add('expandBtn');
-    expandBtn.innerHTML = '&#10530;';
+    expandBtn.innerHTML = '...';
     taskElement.appendChild(expandBtn);
 
     let taskExpanded = false;
@@ -29,6 +32,7 @@ export const expandTasks = (makeEditableFunction, description, priority, taskEle
          taskElement.removeChild(description);
          taskElement.removeChild(priority);
          taskExpanded = false;
+         renderTodos();
         }
     });
 };

@@ -7,7 +7,6 @@ import { deleteProject } from "./projects";
 import { getSelectedProject } from "./projects";
 import { format, parse } from "date-fns";
 import { formatType } from ".";
-import { toolTipFun } from "./toolTip";
 import { colorizeByProperty } from "./domUtils";
 import { expandTasks } from "./domUtils";
 import { createButton } from "./utils";
@@ -42,7 +41,55 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
         projectOption.value = project.name;
         projectOption.innerHTML = project.name;
         selectProjectList.appendChild(projectOption);
-    });    
+    });
+
+    // Completed Checkbox
+    let completedCheckbox = document.createElement('input');
+    completedCheckbox.classList.add('completedCheckbox');
+    completedCheckbox.type = "checkbox";
+    newTodo.appendChild(completedCheckbox);
+    
+    let localStorageTask = JSON.parse(localStorage.getItem(`newTodo${task.originalIndex}`));
+    
+    if (!localStorageTask.priorityFallback) {
+        localStorageTask.priorityFallback = task.priority;
+    }
+    
+    if (localStorageTask.priority === 'completed') {
+        completedCheckbox.checked = true;
+    } else {
+        completedCheckbox.checked = false;
+    }
+
+    completedCheckbox.addEventListener('change', (event) => {
+        let priorityElem = document.querySelector('.priority');
+        if (event.target.checked) {
+            completedCheckbox.setCustomValidity('Task marked as completed');
+            completedCheckbox.reportValidity();
+            console.log('completed');
+            localStorageTask.priority = 'completed';
+            colorizeByProperty(newTodo, 'completed');
+            if (priorityElem) {
+                priorityElem.innerHTML = 'Priority: completed';
+            }
+            setTimeout(() => {
+                completedCheckbox.setCustomValidity('');
+                completedCheckbox.reportValidity();
+            }, 2300);
+        } else {
+            completedCheckbox.setCustomValidity('');
+            completedCheckbox.reportValidity();
+            console.log('not completed');
+            colorizeByProperty(newTodo, localStorageTask.priorityFallback);
+            localStorageTask.priority = localStorageTask.priorityFallback;
+            if (priorityElem) {
+                priorityElem.innerHTML = `Priority: ${localStorageTask.priorityFallback}`;
+            }
+        }
+        localStorage.setItem(`newTodo${task.originalIndex}`, JSON.stringify(localStorageTask));
+    });
+    
+    
 
     // Make tasks editable
     const makeEditableTasks = (property, value) => {
@@ -70,6 +117,8 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
                     console.log(newDate);
                     div.innerHTML = `DueDate: ${newDate}`;
                     task[property] = newDate;
+                    localStorageTask[property] = newDate;
+                    localStorage.setItem(`newTodo${task.originalIndex}`, JSON.stringify(localStorageTask));
                 });
 
                 editDate.addEventListener('blur', () => {
@@ -95,8 +144,16 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
                 div.innerHTML = `DueDate: ${value}`;
             } else {
             const updatedValue = div.textContent.split(':')[1].trim();
+            if (property === 'priority') {
+                colorizeByProperty(newTodo, updatedValue);
+                localStorageTask.priorityFallback = updatedValue;
+                completedCheckbox.checked = false;
+                localStorage.setItem(`newTodo${task.originalIndex}`, JSON.stringify(localStorageTask));
+            }
                 task[property] = updatedValue;
                 console.log(`Updated ${property}: ${updatedValue}`);
+                localStorageTask[property] = updatedValue;
+                localStorage.setItem(`newTodo${task.originalIndex}`, JSON.stringify(localStorageTask));
             }
         });
     };
@@ -104,7 +161,7 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
     makeEditableTasks('title', task.title);
     makeEditableTasks('dueDate', task.dueDate);
 
-    expandTasks(makeEditableTasks, task.description, task.priority, newTodo);
+    expandTasks(makeEditableTasks, task.description, localStorageTask.priority, newTodo);
     colorizeByProperty(newTodo, task.priority);
 
 };
@@ -136,7 +193,6 @@ export const renderTodos = (projectIndex, projectName) => {
 
 export const renderProjects = (makeActive) => {
     let sorted = false;
-    let sortedLocaly = JSON.parse(localStorage.getItem('sorted'));
     let makeActiveIndex = makeActive;
     projectList.innerHTML = "";
     state.projects.forEach((project, projectIndex) => {
@@ -165,35 +221,7 @@ export const renderProjects = (makeActive) => {
         sortBtn.innerHTML = `Sort`;
         projectElement.appendChild(sortBtn);
 
-        const isSorted = (array, property) => {
-            for (let i = 0; i < array.length - 1; i++) {
-                if (array[i][property] > array[i + 1][property]) {
-                    return false;
-                }
-            }
-            return true;
-        };
-
-        let alreadySortedByDate = isSorted(project.todos, 'originalIndex');
-        
-        if (alreadySortedByDate) {
-            toolTipFun(sortBtn, 'sort by Date', 'sort by original index');
-        } else {
-            toolTipFun(sortBtn, 'sort by original index', 'sort by Date');
-
-        }
-
         sortBtn.addEventListener('click', () => {
-            if (sorted) {
-                console.log(project.todos);
-                console.log('Sorted by original index');
-                project.todos.sort((a, b) => a.originalIndex - b.originalIndex)
-                console.log(project.todos);
-                renderTodos();
-                sorted = false;
-                sortBtn.classList.remove('changed');
-                return
-            }
 
             project.todos.forEach((todo, index) => {
                 todo.parsedDate = parse(todo.dueDate, formatType, new Date());
@@ -227,7 +255,7 @@ pubSub.subscribe('newTodo', (todo) => {
     console.log(todo);
     console.log(`Todo added to "Default" project`);
     renderTodos(currentProjectIndex);
-    console.log(state.projects)
+    console.log(state.projects);
 });
 
 pubSub.subscribe('todoDeleted', ({projectIndex, todoIndex}) => {

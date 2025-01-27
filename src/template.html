@@ -7,27 +7,45 @@
     <title>Odin-Todo-List</title>
 </head>
 <body>
-   <h1>Odin-Todo-List</h1>
-   <div class="task-form-div"><h2>Task Form</h2>
-    <form action="" class="task-form">
-        <input type="text" class="title-input" value="Gym">
-        <input type="text" class="description-input" value="Go to gym">
-        <input type="date" class="dueDate-input">
-        <input type="text" class="priority-input" value="1">
-        <button type="submit" class="submit-btn">Submit</button>
-    </form>
+   <div class="container">
+       <main class="main-container">
+           <div class="task-form-div">
+            <form action="" class="task-form">
+                <input type="text" class="title-input" placeholder="Enter task title">
+                <input type="text" class="description-input" placeholder="Enter task description">
+                <input type="date" class="dueDate-input" required>
+                <input type="number" class="priority-input" placeholder="Enter task priority" required>
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+            <div class="logo">
+                <img src="/src/images/odin-lined.png" alt="odin-lined" class="odin-lined" />
+                <div class="text">
+                    <p class="task-form-text">The Odin Project</p>
+                    <p class="task-form-text2">ToDo List</p>
+                </div>
+            </div>
+           </div>
+           <div class="display-projects">
+            <div class="project-list">
+                <h2>Projects</h2>
+            </div>
+            <div class="new-project-form">
+                <input type="text" class="new-project-input" placeholder="Project name">
+                <button class="new-project">Add to list</button>
+            </div>
+            <div class="default-project">
+                <div class="default-text"></div>
+            </div>
+           </div>
+       </main>
+       <footer id="footer">
+        <p style="margin: 0; font-size: 0.9rem;">
+            <span style="font-size: 0.9rem;" id="year"></span>
+            <a href="https://github.com/Mouladoskylaki" target="_blank" style="color: #f39c12; text-decoration: none; font-size: 0.9rem;">Konstantinos Adamopoulos</a>.
+            Made with <span class="pulse-heart">❤️</span> for The Odin Project
+        </p>
+    </footer>
+    
    </div>
-
-   <div class="display-projects">
-    <div class="project-list">
-        <h2>Projects</h2>
-    </div>
-    <div class="new-project-form">
-        <input type="text" class="new-project-input" value="Programming">
-        <button class="new-project">New Project</button>
-    </div>
-    <div class="default-project">Default</div>
-   </div>
-   <div class="foot"></div>
 </body>
 </html>
