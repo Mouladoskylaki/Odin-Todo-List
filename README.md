@@ -1,22 +1,22 @@
-# Webpack_template
-A simple Webpack setup for starting new projects
+# To-Do List Project
 
-# Webpack Template
+This is a to-do list application built with HTML, CSS, and JavaScript as part of The Odin Project curriculum. The app allows you to add, edit, delete, and mark tasks as completed, with tasks stored in local storage for persistence.
 
-A simple Webpack setup for starting new projects. This template includes:
-- Webpack configuration for development and production.
-- Placeholder `src` and `dist` directories.
-- Pre-configured `package.json` with necessary scripts.
+## Features
 
-## How to Use
+- Add, edit, delete, and mark tasks as complete
+- Tasks saved to local storage
+- Responsive design
+- Priority system for tasks
 
-1. Click "Use this template" on the repository page.
-2. Clone your new repository to your local machine.
-3. Run `npm install` to install dependencies.
-4. Start developing!
+## Technologies Used
 
-## Scripts
+- **HTML/CSS/JavaScript** for the main functionality
+- **Webpack** for bundling and asset management
+- **Local Storage** to persist tasks across sessions
 
-- `npm run dev`: Starts the development server.
-- `npm run build`: Creates a production build.
+## Setup
 
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/todo-list-project.git
