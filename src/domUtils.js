@@ -36,3 +36,16 @@ export const expandTasks = (makeEditableFunction, description, priority, taskEle
         }
     });
 };
+
+export function setCaretPosition(element, position) {
+    let range = document.createRange();
+    let selection = window.getSelection();
+    
+    range.setStart(element.childNodes[0] || element, position);
+    range.collapse(true); // Collapse to a single point (no selection)
+    
+    selection.removeAllRanges();
+    selection.addRange(range);
+    console.log('set  carret')
+}
+

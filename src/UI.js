@@ -10,6 +10,7 @@ import { formatType } from ".";
 import { colorizeByProperty } from "./domUtils";
 import { expandTasks } from "./domUtils";
 import { createButton } from "./utils";
+import { setCaretPosition } from "./domUtils";
 
 let defaultProject = document.querySelector('.default-project');
 let projectList = document.querySelector('.project-list');
@@ -134,6 +135,103 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
                 div.blur();
             }
         })
+        
+        // Prevent delete before :
+        let deletedLastChar = false;
+        div.addEventListener('input', (event) => {
+            let textContent = div.innerText;
+            let colonIndex = textContent.indexOf(':');
+            let userInput = textContent.substring(colonIndex + 2);
+            let lastChar = textContent.charAt(textContent.length - 1);
+            const caretPos = window.getSelection().getRangeAt(0).startOffset;
+            if (colonIndex === -1) {
+                div.textContent = `${property}: `;
+                setCaretPosition(div, div.innerText.length);
+                }
+            if (event.inputType === "deleteContentBackward") {
+                if (lastChar === ":") {
+                    div.blur();
+                    div.textContent = `${property}:   `;
+                    deletedLastChar = true;
+                }
+            }
+            if (event.inputType === 'insertText') {
+                if (caretPos < colonIndex + 2) {
+                    div.textContent = `${property}:   `;
+                    setCaretPosition(div, div.innerText.length);
+                }
+            }
+            if (property === 'title') {
+                console.log(property);
+                console.log(userInput);
+                if (userInput.length > 50) {
+                    div.innerText = `${property}: ${userInput.substring(0)}`;
+                }
+                if (userInput === "666") {
+                    console.log('The number of the beast');
+                    let body = document.querySelector('.body');
+                    let devil = document.createElement('img');
+                    devil.src = 'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_teaser_image/Devil2_0.jpg?itok=R6G-evLx';
+                    devil.classList.add('devil');
+                    body.appendChild(devil);
+                    setTimeout(() => {
+                        body.removeChild(devil);
+                    }, 3000)
+
+                }
+            }
+            if (property === 'description') {
+                console.log(property);
+                console.log(userInput);
+                if (userInput.length > 150) {
+                    div.innerText = `${property}: ${userInput.substring(0)}`;
+                }
+            }
+            if (property === 'priority') {
+                console.log(property);
+                console.log(userInput);
+                if (textContent.length > 11) {
+                    div.innerText = `${property}: 1`;
+                }
+                if (userInput > 3) {
+                    console.log("more than 3");
+                    console.log(task.priority)
+                    div.innerText = `${property}: ${task.priority}`;
+                }
+                if (userInput === '0') {
+                    console.log("more than 3");
+                    console.log(task.priority)
+                    div.innerText = `${property}: ${task.priority}`;
+                }
+
+            }
+        });
+
+        div.addEventListener('click', () => {
+            let textContent = div.innerText;
+            let colonIndex = textContent.indexOf(':');
+            const caretPos = window.getSelection().getRangeAt(0).startOffset;
+            if (caretPos < colonIndex + 2) {
+            setCaretPosition(div, div.innerText.length);
+            }
+  
+        });
+
+        div.addEventListener('keydown', (event) => {
+            let textContent = div.innerText;
+            let colonIndex = textContent.indexOf(':');
+            const caretPos = window.getSelection().getRangeAt(0).startOffset;
+            if (event.key === 'ArrowLeft') {
+                if (caretPos < colonIndex + 2) {
+                    setCaretPosition(div, div.innerText.length);
+                    }
+                    if (caretPos === colonIndex + 1) {
+                        setCaretPosition(div, div.innerText.length);
+                        }
+            }
+        });
+
+
 
         div.addEventListener('blur', (event) => {
             if (property === 'dueDate' && event.relatedTarget && event.relatedTarget.type === 'date') {
@@ -144,6 +242,7 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
                 div.innerHTML = `DueDate: ${value}`;
             } else {
             const updatedValue = div.textContent.split(':')[1].trim();
+       
             if (property === 'priority') {
                 colorizeByProperty(newTodo, updatedValue);
                 localStorageTask.priorityFallback = updatedValue;
@@ -262,3 +361,4 @@ pubSub.subscribe('todoDeleted', ({projectIndex, todoIndex}) => {
     console.log(`Todo deleted from project "${state.projects[projectIndex].name}"`);
     renderTodos(projectIndex);
 });
+

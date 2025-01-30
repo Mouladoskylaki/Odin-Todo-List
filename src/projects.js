@@ -7,8 +7,6 @@ let newProjectInput = document.querySelector('.new-project-input');
 
 export const newProject = () => {
     state.projects.push({name: newProjectInput.value, todos: []});
-    console.log(newProjectInput.value);
-    console.log(state.projects);
     let neoIndex;
     const neoProject = state.projects.find((project, index) => {
         if (project.name === newProjectInput.value) {
@@ -17,8 +15,7 @@ export const newProject = () => {
     })
     let project = document.querySelector('.project-list > .project-element:last-child');
     project.classList.add('active');
-    console.log(project)
-    console.log(neoIndex)
+    newProjectInput.value = '';
     renderTodos(neoIndex, newProjectInput.value);
     renderProjects(neoIndex);
 }

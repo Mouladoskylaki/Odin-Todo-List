@@ -27,31 +27,4 @@ renderProjects();
 renderTodos();
 
 
-// let logBtn = document.createElement('button');
-// logBtn.innerHTML = 'log';
-// foot.appendChild(logBtn);
-
-// let pushBtn = document.createElement('button');
-// pushBtn.innerHTML = 'push';
-// foot.appendChild(pushBtn);
-
-// let array = [];
-// for (let i = 0; i < 10; i++) {
-//     array.push([]);
-// }
-// console.log(array);
-
-// let person = {
-//     name: 'John'
-// };
-
-// logBtn.addEventListener('click', () => {
-//    console.log(array);
-// })
-
-// pushBtn.addEventListener('click', () => {
-// array[5].push(person);
-    
-// })
-
   

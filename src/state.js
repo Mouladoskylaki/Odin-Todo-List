@@ -2,7 +2,6 @@
 export const state = {
 
     projects: [
-        { name: "Default", todos: [] },
-        { name: "New", todos: [] }
+        { name: "Default", todos: [] }
     ],
 }
