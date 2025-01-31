@@ -94,9 +94,6 @@ export const submitTodo = (event) => {
     inputValidityStates.descriptionInput.isValid = false;
 };
 
-let skato = new Todo('skata', 'skatenia', '12/11/25', 3);
-localStorage.setItem(`newTodo0`, JSON.stringify(skato));
-
 export const deleteTodo = (projectIndex, todoIndex) => {
   let { index: currentProjectIndex, name: currentProjectName } = getSelectedProject();
   console.log(state.projects[currentProjectIndex].todos[todoIndex].originalIndex);
@@ -112,3 +109,139 @@ export const deleteTodo = (projectIndex, todoIndex) => {
   state.projects[currentProjectIndex].todos.splice(todoIndex, 1);
   pubSub.publish('todoDeleted', { projectIndex, todoIndex});
 }
+
+// let todo1 = {
+//     title: "Implement Task Creation",
+//     description: "Allowed users to add new tasks dynamically.",
+//     dueDate: "Jan-09-2025",
+//     priority: "1",
+//     originalIndex: 1,
+//     addedToProject: "Task Management Features"
+//   }
+  
+//   localStorage.setItem(`newTodo1`, JSON.stringify(todo1));
+
+  let testTodos = [
+    {
+      "title": "Implement Task Creation",
+      "description": "Allowed users to add new tasks dynamically.",
+      "dueDate": "Jan-09-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 1,
+      "addedToProject": "Task Management Features"
+    },
+    {
+      "title": "Enable Task Editing",
+      "description": "Made task descriptions and priorities editable.",
+      "dueDate": "Jan-10-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 2,
+      "addedToProject": "Task Management Features"
+    },
+    {
+      "title": "Add Task Completion Feature",
+      "description": "Mark tasks as completed with a visual update.",
+      "dueDate": "Jan-11-2025",
+      "priority": "2",
+      "priorityFallback" : 1,
+      "originalIndex": 3,
+      "addedToProject": "Task Management Features"
+    },
+    {
+      "title": "Expand/Collapse Task Details",
+      "description": "Show/hide details when clicking a task.",
+      "dueDate": "Jan-12-2025",
+      "priority": "2",
+      "priorityFallback" : 1,
+      "originalIndex": 4,
+      "addedToProject": "Task Management Features"
+    },
+    {
+      "title": "Allow Task Deletion",
+      "description": "Added a button to remove tasks from the list.",
+      "dueDate": "Jan-13-2025",
+      "priority": "3",
+      "priorityFallback" : 1,
+      "originalIndex": 5,
+      "addedToProject": "Task Management Features"
+    },
+    {
+      "title": "Implement Project Categories",
+      "description": "Allowed grouping of tasks under different projects.",
+      "dueDate": "Jan-14-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 6,
+      "addedToProject": "Project Management"
+    },
+    {
+      "title": "Enable Switching Between Projects",
+      "description": "Users can navigate between different projects.",
+      "dueDate": "Jan-15-2025",
+      "priority": "2",
+      "priorityFallback" : 1,
+      "originalIndex": 7,
+      "addedToProject": "Project Management"
+    },
+    {
+      "title": "Add Default Project on Load",
+      "description": "Ensured a default project appears when the page loads.",
+      "dueDate": "Jan-16-2025",
+      "priority": "3",
+      "priorityFallback" : 1,
+      "originalIndex": 8,
+      "addedToProject": "Project Management"
+    },
+    {
+      "title": "Store Data in LocalStorage",
+      "description": "Saved tasks and projects so they persist after refresh.",
+      "dueDate": "Jan-17-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 9,
+      "addedToProject": "Data Persistence"
+    },
+    {
+      "title": "Load Data on Page Load",
+      "description": "Fetched saved tasks from LocalStorage when opening the app.",
+      "dueDate": "Jan-18-2025",
+      "priority": "2",
+      "priorityFallback" : 1,
+      "originalIndex": 10,
+      "addedToProject": "Data Persistence"
+    },
+    {
+      "title": "Optimize Image Loading",
+      "description": "Used lazy loading and compression for faster performance.",
+      "dueDate": "Jan-19-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 11,
+      "addedToProject": "Performance & Optimization"
+    },
+    {
+      "title": "Use Webpack Asset Management",
+      "description": "Managed images, fonts, and styles efficiently.",
+      "dueDate": "Jan-20-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 12,
+      "addedToProject": "Performance & Optimization"
+    },
+    {
+      "title": "Preload Critical Resources",
+      "description": "Improved initial loading speed with preloaded assets.",
+      "dueDate": "Jan-21-2025",
+      "priority": "1",
+      "priorityFallback" : 1,
+      "originalIndex": 13,
+      "addedToProject": "Performance & Optimization"
+    }
+  ];
+
+  testTodos.forEach((todo, index) => {
+    localStorage.setItem(`newTodo${index + 1}`, JSON.stringify(todo));
+  })
+  

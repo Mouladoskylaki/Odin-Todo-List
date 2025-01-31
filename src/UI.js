@@ -54,6 +54,8 @@ export const renderTodo = (task, todoIndex, projectIndex) => {
     
     if (!localStorageTask.priorityFallback) {
         localStorageTask.priorityFallback = task.priority;
+    } else {
+        localStorageTask.priorityFallback = '1'
     }
     
     if (localStorageTask.priority === 'completed') {

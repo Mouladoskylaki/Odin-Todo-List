@@ -27,22 +27,5 @@ populateArrFromLocal();
 renderProjects();
 renderTodos();
 
-let footer = document.getElementById('footer')
-let logBtn = document.createElement('button');
-logBtn.innerHTML = 'log';
-footer.appendChild(logBtn);
-
-let pushBtn = document.createElement('button');
-pushBtn.innerHTML = 'push';
-footer.appendChild(pushBtn);
-
-logBtn.addEventListener('click', () => {
-   console.log(state.projects[0].todos);
-})
-
-pushBtn.addEventListener('click', () => {
-array[5].push(person);
-    
-})
 
   
