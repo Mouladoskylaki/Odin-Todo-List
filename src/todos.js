@@ -94,6 +94,9 @@ export const submitTodo = (event) => {
     inputValidityStates.descriptionInput.isValid = false;
 };
 
+let skato = new Todo('skata', 'skatenia', '12/11/25', 3);
+localStorage.setItem(`newTodo0`, JSON.stringify(skato));
+
 export const deleteTodo = (projectIndex, todoIndex) => {
   let { index: currentProjectIndex, name: currentProjectName } = getSelectedProject();
   console.log(state.projects[currentProjectIndex].todos[todoIndex].originalIndex);
